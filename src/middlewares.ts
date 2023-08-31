@@ -35,7 +35,8 @@ const errorHandler = (
 
 const getCoordinates = (req: Request, res: Response, next: NextFunction) => {
   try {
-    console.log(req.file?.path);
+    console.log('getCoordinates', req.file?.path);
+    //console.log(req.file?.path);
     // coordinates below should be an array of GPS coordinates in decimal format: [longitude, latitude]
     new ExifImage({image: req.file?.path}, (error, exifData) => {
       if (error) {
@@ -76,13 +77,14 @@ const makeThumbnail = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.file?.path);
+    console.log('makeThumbnail', req.file?.path);
     await sharp(req.file?.path)
       .resize(160, 160)
       .png()
       .toFile(req.file?.path + '_thumb');
     next();
   } catch (error) {
+    console.log(error);
     next(new CustomError('Thumbnail not created', 500));
   }
 };

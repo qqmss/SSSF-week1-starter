@@ -32,6 +32,14 @@ const getUser = async (userId: string): Promise<User> => {
 };
 
 // TODO: create addUser function
+const addUser = async (data: PostUser): Promise<number> => {
+  const sql = promisePool.format('INSERT INTO sssf_user SET ?;', [data]);
+  const [headers] = await promisePool.execute<ResultSetHeader>(sql);
+  if (headers.affectedRows === 0) {
+    throw new CustomError('No users added', 304);
+  }
+  return headers.insertId;
+};
 
 const updateUser = async (data: PutUser, userId: number): Promise<boolean> => {
   const sql = promisePool.format('UPDATE sssf_user SET ? WHERE user_id = ?;', [
@@ -46,6 +54,16 @@ const updateUser = async (data: PutUser, userId: number): Promise<boolean> => {
 };
 
 // TODO: create deleteUser function
+const deleteUser = async (userId: number): Promise<boolean> => {
+  const sql = promisePool.format('DELETE FROM sssf_user WHERE user_id = ?;', [
+    userId,
+  ]);
+  const [headers] = await promisePool.execute<ResultSetHeader>(sql);
+  if (headers.affectedRows === 0) {
+    throw new CustomError('No users deleted', 400);
+  }
+  return true;
+};
 
 const getUserLogin = async (email: string): Promise<User> => {
   const [rows] = await promisePool.execute<GetUser[]>(
